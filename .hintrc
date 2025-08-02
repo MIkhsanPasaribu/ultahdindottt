@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "development"
+  ],
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not edge <= 131"
+  ],
+  "hints": {
+    "apple-touch-icons": "off"
+  }
+}

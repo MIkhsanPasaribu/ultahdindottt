@@ -8,6 +8,7 @@
     "not edge <= 131"
   ],
   "hints": {
-    "apple-touch-icons": "off"
+    "apple-touch-icons": "off",
+    "no-inline-styles": "off"
   }
 }

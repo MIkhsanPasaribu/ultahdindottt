@@ -44,6 +44,7 @@ function initializeWebsite() {
 
   // Initialize mobile scroll fixes
   initializeMobileScrollFix();
+  initializeSmoothScrolling();
 
   // Initialize components
   setTimeout(() => {
@@ -126,7 +127,7 @@ function createSkyParticles() {
 }
 
 /**
- * Initialize mobile scroll fixes to prevent jumping
+ * Initialize mobile scroll optimizations for smooth scrolling
  */
 function initializeMobileScrollFix() {
   // Detect mobile devices
@@ -137,13 +138,7 @@ function initializeMobileScrollFix() {
     );
 
   if (isMobile) {
-    // Disable smooth scrolling on mobile
-    document.documentElement.style.scrollBehavior = "auto";
-
-    // Add touch scroll improvements
-    document.body.style.scrollPaddingTop = "20px";
-
-    // Prevent scroll jumping by adjusting viewport height
+    // Set viewport height for mobile
     const setViewportHeight = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -153,26 +148,126 @@ function initializeMobileScrollFix() {
     window.addEventListener("resize", setViewportHeight);
     window.addEventListener("orientationchange", setViewportHeight);
 
-    // Throttle scroll events more aggressively on mobile
-    let scrollTimeout;
-    const originalAddEventListener = window.addEventListener;
-    window.addEventListener = function (type, listener, options) {
-      if (type === "scroll") {
-        const throttledListener = function (e) {
-          if (scrollTimeout) return;
-          scrollTimeout = setTimeout(() => {
-            listener(e);
-            scrollTimeout = null;
-          }, 16); // ~60fps
+    // Custom smooth scroll implementation for mobile
+    let isScrolling = false;
+
+    // Override any programmatic scrolling with smooth behavior
+    const originalScrollTo = window.scrollTo;
+    const originalScrollIntoView = Element.prototype.scrollIntoView;
+
+    window.scrollTo = function (options) {
+      if (typeof options === "object" && options !== null) {
+        options.behavior = "smooth";
+      } else if (arguments.length === 2) {
+        // scrollTo(x, y) format
+        options = {
+          left: arguments[0],
+          top: arguments[1],
+          behavior: "smooth",
         };
-        return originalAddEventListener.call(this, type, throttledListener, {
-          ...options,
-          passive: true,
+      }
+      return originalScrollTo.call(this, options);
+    };
+
+    Element.prototype.scrollIntoView = function (options) {
+      if (typeof options === "boolean") {
+        options = { block: options ? "start" : "end", behavior: "smooth" };
+      } else if (typeof options === "object" && options !== null) {
+        options.behavior = "smooth";
+      } else {
+        options = { behavior: "smooth", block: "start" };
+      }
+      return originalScrollIntoView.call(this, options);
+    };
+
+    // Prevent scroll event throttling that might interfere with smooth scrolling
+    document.addEventListener(
+      "touchstart",
+      function () {
+        isScrolling = true;
+      },
+      { passive: true }
+    );
+
+    document.addEventListener(
+      "touchend",
+      function () {
+        setTimeout(() => {
+          isScrolling = false;
+        }, 100);
+      },
+      { passive: true }
+    );
+
+    // Optimize scroll performance
+    let ticking = false;
+    function updateScrollPosition() {
+      // Perform scroll-dependent operations here if needed
+      ticking = false;
+    }
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (!ticking) {
+          requestAnimationFrame(updateScrollPosition);
+          ticking = true;
+        }
+      },
+      { passive: true }
+    );
+  }
+}
+
+/**
+ * Initialize enhanced smooth scrolling for all devices
+ */
+function initializeSmoothScrolling() {
+  // Add smooth scrolling to all anchor links
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
         });
       }
-      return originalAddEventListener.call(this, type, listener, options);
-    };
-  }
+    });
+  });
+
+  // Enhanced scrollTo function for programmatic scrolling
+  window.smoothScrollTo = function (targetY, duration = 800) {
+    const startY = window.pageYOffset;
+    const distance = targetY - startY;
+    const startTime = performance.now();
+
+    function scrollStep(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Easing function for smooth animation
+      const ease = 0.5 - Math.cos(progress * Math.PI) / 2;
+
+      window.scrollTo(0, startY + distance * ease);
+
+      if (progress < 1) {
+        requestAnimationFrame(scrollStep);
+      }
+    }
+
+    requestAnimationFrame(scrollStep);
+  };
+
+  // Handle any section scrolling
+  window.scrollToSection = function (sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      const targetY = section.offsetTop;
+      window.smoothScrollTo(targetY);
+    }
+  };
 }
 
 /**

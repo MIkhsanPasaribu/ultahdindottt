@@ -3,27 +3,35 @@
    Mobile-first responsive design
    ================================ */
 
-/* Mobile scroll fixes - Prevent scroll jumping */
+/* Mobile optimizations */
 @media (max-width: 768px) {
   html {
-    scroll-behavior: auto !important;
+    scroll-behavior: smooth;
   }
 
   body {
-    scroll-padding-top: 20px;
-    overscroll-behavior-y: contain; /* Prevent scroll chaining */
+    scroll-padding-top: 0;
+    overflow-x: hidden;
+    touch-action: pan-y; /* Allow vertical scrolling but prevent other gestures that might interfere */
   }
 
-  /* Reduce section heights on mobile to prevent jumping */
+  /* Optimize section spacing for mobile */
   section {
     scroll-margin-top: 0;
+    position: relative;
   }
 
-  /* Make sections more readable on mobile */
+  /* Adjust section heights for better mobile scrolling */
   .hero-section,
   .hopes-section,
   .letter-section {
     padding: var(--spacing-lg) 0;
+  }
+
+  /* Ensure smooth scrolling on webkit browsers */
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 

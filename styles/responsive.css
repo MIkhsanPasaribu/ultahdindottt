@@ -1039,7 +1039,7 @@ footer p {
   font-style: italic;
   color: var(--blue-text);
   font-size: 1.1rem;
-  font-family: "Dancing Script", cursive;
+  font-family: "Quicksand", sans-serif;
   font-weight: 600;
 }
 
@@ -1107,7 +1107,7 @@ footer p {
   font-size: 0.9rem;
   color: var(--text-light);
   margin-bottom: 8px;
-  font-family: "Dancing Script", cursive;
+  font-family: "Quicksand", sans-serif;
 }
 
 .music-progress {
@@ -1204,7 +1204,7 @@ footer p {
   align-items: center;
   gap: 8px;
   color: white;
-  font-family: "Dancing Script", cursive;
+  font-family: "Quicksand", sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
   box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);

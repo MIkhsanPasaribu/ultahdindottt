@@ -40,7 +40,7 @@
   /* Typography */
   --font-heading: "Playfair Display", serif;
   --font-body: "Quicksand", sans-serif;
-  --font-script: "Dancing Script", cursive;
+  --font-script: "Quicksand", sans-serif;
 
   /* Spacing */
   --spacing-xs: 0.5rem;

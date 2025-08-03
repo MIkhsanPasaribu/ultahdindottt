@@ -3,6 +3,30 @@
    Mobile-first responsive design
    ================================ */
 
+/* Mobile scroll fixes - Prevent scroll jumping */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    scroll-padding-top: 20px;
+    overscroll-behavior-y: contain; /* Prevent scroll chaining */
+  }
+
+  /* Reduce section heights on mobile to prevent jumping */
+  section {
+    scroll-margin-top: 0;
+  }
+
+  /* Make sections more readable on mobile */
+  .hero-section,
+  .hopes-section,
+  .letter-section {
+    padding: var(--spacing-lg) 0;
+  }
+}
+
 /* Memories Section */
 .memories-section {
   padding: var(--spacing-xl) 0;

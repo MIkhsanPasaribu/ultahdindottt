@@ -18,6 +18,9 @@
   --blue-text-hover: #1a4a7a;
   --blue-border: #4682b4;
 
+  /* Dynamic viewport height for mobile */
+  --vh: 1vh;
+
   --gradient-sky: linear-gradient(
     135deg,
     #87ceeb 0%,
@@ -96,8 +99,15 @@
 
 /* Body & HTML */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   font-size: 16px;
+}
+
+/* Mobile-specific scroll behavior */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: auto !important;
+  }
 }
 
 body {
@@ -292,6 +302,16 @@ body {
   position: relative;
   overflow: hidden;
   background: var(--gradient-sky);
+}
+
+/* Mobile: Adjust hero height to prevent scroll jumping */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: calc(
+      var(--vh, 1vh) * 100
+    ); /* Use dynamic viewport height on mobile */
+    padding: var(--spacing-lg) 0;
+  }
 }
 
 .clouds-container {

@@ -42,6 +42,9 @@ function initializeWebsite() {
     document.documentElement.setAttribute("data-theme", "dark");
   }
 
+  // Initialize mobile scroll fixes
+  initializeMobileScrollFix();
+
   // Initialize components
   setTimeout(() => {
     hideLoadingScreen();
@@ -119,6 +122,56 @@ function createSkyParticles() {
   // Create initial batch
   for (let i = 0; i < 10; i++) {
     setTimeout(createParticle, i * 200);
+  }
+}
+
+/**
+ * Initialize mobile scroll fixes to prevent jumping
+ */
+function initializeMobileScrollFix() {
+  // Detect mobile devices
+  const isMobile =
+    window.innerWidth <= 768 ||
+    /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+
+  if (isMobile) {
+    // Disable smooth scrolling on mobile
+    document.documentElement.style.scrollBehavior = "auto";
+
+    // Add touch scroll improvements
+    document.body.style.scrollPaddingTop = "20px";
+
+    // Prevent scroll jumping by adjusting viewport height
+    const setViewportHeight = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    setViewportHeight();
+    window.addEventListener("resize", setViewportHeight);
+    window.addEventListener("orientationchange", setViewportHeight);
+
+    // Throttle scroll events more aggressively on mobile
+    let scrollTimeout;
+    const originalAddEventListener = window.addEventListener;
+    window.addEventListener = function (type, listener, options) {
+      if (type === "scroll") {
+        const throttledListener = function (e) {
+          if (scrollTimeout) return;
+          scrollTimeout = setTimeout(() => {
+            listener(e);
+            scrollTimeout = null;
+          }, 16); // ~60fps
+        };
+        return originalAddEventListener.call(this, type, throttledListener, {
+          ...options,
+          passive: true,
+        });
+      }
+      return originalAddEventListener.call(this, type, listener, options);
+    };
   }
 }
 
